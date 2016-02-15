@@ -77,8 +77,17 @@ def write_hanzi_frequency():
             fp.write('%d. %s %s\n' % (i, item[0], item[1]))
 
 
-if __name__ == '__main__':
-    download_dict()
-    # write_flashcards(get_dict_items(lambda x: True))
+def get_most_frequent_hanzi():
+    counter = Counter()
+    for c in get_corpus_chars():
+        counter[c] += 1
 
-    write_hanzi_frequency()
+    return dict(counter.most_common(3500))
+
+
+if __name__ == '__main__':
+    # download_dict()
+    # write_hanzi_frequency()
+    hanzi_dict = get_most_frequent_hanzi()
+    print(hanzi_dict)
+    # write_flashcards(get_dict_items(lambda x: True))
