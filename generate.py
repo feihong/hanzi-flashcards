@@ -8,9 +8,12 @@ from pathlib import Path
 
 DICTIONARY_URL = 'http://www.mdbg.net/chindict/export/cedict/cedict_1_0_ts_utf-8_mdbg.txt.gz'
 
+FLASHCARD_HANZI_MAX = 3500
+
 IGNORED_CHARACTERS = ['：', '”', '“', '\u3000', '一', '。', '，', '！', '、', '…']
 
 DictItem = namedtuple('DictItem', ['traditional', 'simplified', 'pinyin', 'gloss'])
+
 
 
 def download_dict():
@@ -57,7 +60,7 @@ def write_flashcards(items):
 def get_corpus_chars():
     corpus = Path('corpus')
     for txtfile in corpus.glob('*.txt'):
-        print(txtfile)
+        print('Opening', txtfile)
         with txtfile.open() as fp:
             while True:
                 c = fp.read(1)
@@ -75,7 +78,10 @@ def write_hanzi_frequency():
     items = counter.most_common()
     with open('hanzi_frequency.txt', 'w') as fp:
         for i, item in enumerate(items, 1):
-            fp.write('%d. %s %s\n' % (i, item[0], item[1]))
+            hanzi, count = item
+            fp.write('%d. %s %s\n' % (i, hanzi, count))
+
+    print('\nWrote %d lines to hanzi_frequency.txt' % i)
 
 
 def get_most_frequent_hanzi():
@@ -83,7 +89,7 @@ def get_most_frequent_hanzi():
     for c in get_corpus_chars():
         counter[c] += 1
 
-    return dict(counter.most_common(3500))
+    return dict(counter.most_common(FLASHCARD_HANZI_MAX))
 
 
 # Source: http://stackoverflow.com/questions/8200349/convert-numbered-pinyin-to-pinyin-with-tone-marks/8200388#8200388
@@ -134,10 +140,11 @@ def decode_pinyin(s):
 
 
 if __name__ == '__main__':
-    # download_dict()
-    # write_hanzi_frequency()
-    hanzi_dict = get_most_frequent_hanzi()
+    download_dict()
 
+    # write_hanzi_frequency()
+
+    hanzi_dict = get_most_frequent_hanzi()
     dict_items = get_dict_items(lambda x: x.simplified in hanzi_dict)
     dict_items = list(dict_items)
     dict_items.sort(key=lambda x: -hanzi_dict[x.simplified])
