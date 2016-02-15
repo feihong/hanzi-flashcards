@@ -18,7 +18,11 @@ def download_dict():
             fp.write(response.content)
 
 
-def get_characters():
+def get_dict_items():
+    """
+    Return a sequence of single-hanzi dictionary items.
+
+    """
     with gzip.open('dict.txt.gz', mode='rt', encoding='utf-8') as fp:
         for line in fp:
             if not '[' in line:
@@ -30,9 +34,19 @@ def get_characters():
                     yield DictItem(*match.groups())
 
 
+def write_flashcards(items):
+    with open('flashcards.txt', 'w') as fp:
+        for count, item in enumerate(get_dict_items()):
+            line = '%s, %s\t%s\t' % (item.pinyin, item.gloss, item.pinyin)
+            if item.simplified == item.traditional:
+                line += '%s, %s' % (item.simplified, item.traditional)
+            else:
+                line += '%s' % item.simplified
+            print(line)
+            fp.write(line + '\n')
+
+    print('\nWrote %d entries to flashcards.txt' % count)
+
 if __name__ == '__main__':
     download_dict()
-    for i, item in enumerate(get_characters()):
-        print(item)
-
-    print(i)
+    write_flashcards(get_dict_items())
