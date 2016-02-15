@@ -44,14 +44,16 @@ def get_dict_items(filter_by):
 
 def write_flashcards(items):
     with open('flashcards.txt', 'w') as fp:
+        fp.write('\ufeff')      # Write BOM
+        # fp.write('//Hanzi Preload\n')
         for i, item in enumerate(items):
-            line = '%s, %s\t%s\t' % (
-                decode_pinyin(item.pinyin), item.gloss, item.pinyin)
+            line = '%s, %s\t' % (
+                decode_pinyin(item.pinyin), item.gloss)
             if item.simplified == item.traditional:
                 line += '%s' % item.simplified
             else:
                 line += '%s, %s' % (item.traditional, item.simplified)
-            print(i, line)
+            print(i, repr(line))
             fp.write(line + '\n')
 
     print('\nWrote %d entries to flashcards.txt' % i)
