@@ -1,2 +1,4 @@
 dict.txt.gz
-*.txt
+corpus/*.txt
+flashcards.txt
+hanzi_frequency.txt

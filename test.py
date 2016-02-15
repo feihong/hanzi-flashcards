@@ -53,25 +53,25 @@ def write_flashcards(items):
     print('\nWrote %d entries to flashcards.txt' % count)
 
 
-def write_hanzi_frequency():
-    def get_chars():
-        corpus = Path('corpus')
-        for txtfile in corpus.glob('*.txt'):
-            print(txtfile)
-            with txtfile.open() as fp:
-                while True:
-                    c = fp.read(1)
-                    if c == '':
-                        break
-                    if ord(c) > 256 and c not in IGNORED_CHARACTERS:
-                        yield c
+def get_corpus_chars():
+    corpus = Path('corpus')
+    for txtfile in corpus.glob('*.txt'):
+        print(txtfile)
+        with txtfile.open() as fp:
+            while True:
+                c = fp.read(1)
+                if c == '':
+                    break
+                if ord(c) > 256 and c not in IGNORED_CHARACTERS:
+                    yield c
 
+
+def write_hanzi_frequency():
     counter = Counter()
-    for c in get_chars():
+    for c in get_corpus_chars():
         counter[c] += 1
 
-    items = list(counter.items())
-    items.sort(key=lambda x: -x[1])
+    items = counter.most_common()
     with open('hanzi_frequency.txt', 'w') as fp:
         for i, item in enumerate(items, 1):
             fp.write('%d. %s %s\n' % (i, item[0], item[1]))
