@@ -41,16 +41,16 @@ def get_dict_items(filter_by):
 
 def write_flashcards(items):
     with open('flashcards.txt', 'w') as fp:
-        for count, item in enumerate(items):
+        for i, item in enumerate(items):
             line = '%s, %s\t%s\t' % (item.pinyin, item.gloss, item.pinyin)
             if item.simplified == item.traditional:
-                line += '%s, %s' % (item.simplified, item.traditional)
-            else:
                 line += '%s' % item.simplified
-            print(line)
+            else:
+                line += '%s, %s' % (item.simplified, item.traditional)
+            print(i, line)
             fp.write(line + '\n')
 
-    print('\nWrote %d entries to flashcards.txt' % count)
+    print('\nWrote %d entries to flashcards.txt' % i)
 
 
 def get_corpus_chars():
@@ -89,5 +89,6 @@ if __name__ == '__main__':
     # download_dict()
     # write_hanzi_frequency()
     hanzi_dict = get_most_frequent_hanzi()
-    print(hanzi_dict)
-    # write_flashcards(get_dict_items(lambda x: True))
+
+    dict_items = get_dict_items(lambda x: x.simplified in hanzi_dict)
+    write_flashcards(dict_items)
